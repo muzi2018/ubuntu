@@ -1,0 +1,3 @@
+install pipeline
+.bashrc configure
+
