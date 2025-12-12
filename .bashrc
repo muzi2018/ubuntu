@@ -140,7 +140,14 @@ unset __conda_setup
 
 ############# git branch ###############
 parse_git_branch() {
-  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
+
+  ahead=$(git rev-list --left-right --count origin/$branch...$branch 2>/dev/null | awk '{print $2}')
+  [ -z "$ahead" ] && ahead=0
+
+  uncommitted=$(git status --porcelain 2>/dev/null | wc -l)
+
+  echo -e " (\033[34m${branch}\033[0m: +${ahead} \033[32m✓\033[0m, ${uncommitted} \033[31m✗\033[0m)"
 }
 
 # Default prompt for non-root users
