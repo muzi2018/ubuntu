@@ -133,25 +133,40 @@ unset __conda_setup
 
 
 source /home/wang/workspace/IsaacLab/_isaac_sim/setup_conda_env.sh
-############# git branch ###############
+############# Git branch with commit/uncommitted info #############
 parse_git_branch() {
-  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
+
+    # Commits ahead of remote
+    ahead=$(git rev-list --left-right --count origin/$branch...$branch 2>/dev/null | awk '{print $2}')
+    [ -z "$ahead" ] && ahead=0
+
+    # Uncommitted changes
+    uncommitted=$(git status --porcelain 2>/dev/null | wc -l)
+
+    # Current time
+    current_time=$(date +"%H:%M:%S")
+
+    # Print branch info + time, then newline
+    printf " (\033[34m%s\033[0m: +%d \033[32m✓\033[0m, %d \033[31m✗\033[0m) \033[1;35m%s\033[0m" \
+        "$branch" "$ahead" "$uncommitted" "$current_time"
 }
 
+############# PS1 Prompt #############
+
 # Default prompt for non-root users
-PS1_DEFAULT="\[\033[m\]|\[\033[1;35m\]\t\[\033[m\]|\[\e[1;31m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\]"
+PS1_DEFAULT="\[\033[m\]|\[\e[1;31m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\]"
 
 # Root user prompt
-PS1_ROOT="\[\033[m\]|\[\033[1;35m\]\t\[\033[m\]|\[\e[1m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\]"
+PS1_ROOT="\[\033[m\]|\[\e[1m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\]"
 
-# Modify the default and root prompts to include the git branch
-PS1_DEFAULT="${PS1_DEFAULT}\n\[\033[01;34m\]\$(parse_git_branch)\[\033[00m\]"
-PS1_ROOT="${PS1_ROOT}\n\[\033[01;34m\]\$(parse_git_branch)\[\033[00m\]"
-# Set the prompt based on whether the user is root or not
-if [ "`id -u`" -eq 0 ]; then
+# Add Git branch info + time (cursor will be on next line)
+PS1_DEFAULT="${PS1_DEFAULT}\n\$(parse_git_branch)\n"
+PS1_ROOT="${PS1_ROOT}\n\$(parse_git_branch)\n"
+
+# Set PS1 depending on user
+if [ "$(id -u)" -eq 0 ]; then
     PS1="$PS1_ROOT"
 else
     PS1="$PS1_DEFAULT"
 fi
-
-
