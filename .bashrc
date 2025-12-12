@@ -149,7 +149,7 @@ parse_git_branch() {
     uncommitted=$(git status --porcelain 2>/dev/null | wc -l)
 
     # current time
-    current_time=$(date +"%H:%M:%S")
+    # current_time=$(date +"%H:%M:%S")
 
     printf " (\033[34m%s\033[0m: +%d \033[32m✓\033[0m, %d \033[31m✗\033[0m) \033[1;35m%s\033[0m" \
         "$branch" "$ahead" "$uncommitted" "$current_time"
@@ -157,10 +157,10 @@ parse_git_branch() {
 ############# PS1 Prompt #############
 
 # Default prompt for non-root users
-PS1_DEFAULT="\[\033[m\]|\[\e[1;31m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\]"
+PS1_DEFAULT="\[\033[m\]|\[\e[1;31m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\] "
 
 # Root user prompt
-PS1_ROOT="\[\033[m\]|\[\e[1m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\]"
+PS1_ROOT="\[\033[m\]|\[\e[1m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\] "
 
 # Add Git branch info + time (cursor will be on next line)
 PS1_DEFAULT="${PS1_DEFAULT}\n\$(parse_git_branch)"
@@ -172,3 +172,4 @@ if [ "$(id -u)" -eq 0 ]; then
 else
     PS1="$PS1_DEFAULT"
 fi
+
