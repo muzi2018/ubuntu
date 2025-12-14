@@ -154,6 +154,23 @@ parse_git_branch() {
     printf " (\033[34m%s\033[0m: +%d \033[32m✓\033[0m, %d \033[31m✗\033[0m) \033[1;35m%s\033[0m" \
         "$branch" "$ahead" "$uncommitted" "$current_time"
 }
+
+
+# Function to generate PS1 dynamically
+update_prompt() {
+    # Base prompt
+    local base="\[\033[m\]|\[\e[1;31m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\] "
+
+    # Check if inside a Git repo
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        # Add Git branch info
+        base="${base}\n\$(parse_git_branch)\n"
+    fi
+
+    PS1="$base"
+}
+PROMPT_COMMAND=update_prompt
+
 ############# PS1 Prompt #############
 
 # Default prompt for non-root users
@@ -163,8 +180,16 @@ PS1_DEFAULT="\[\033[m\]|\[\e[1;31m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\03
 PS1_ROOT="\[\033[m\]|\[\e[1m\]\u\[\e[1;36m\]\[\033[m\]@\[\e[1;36m\]\h\[\033[m\]:\[\e[0m\]\[\e[1;32m\][\W]> \[\e[0m\] "
 
 # Add Git branch info + time (cursor will be on next line)
-PS1_DEFAULT="${PS1_DEFAULT}\n\$(parse_git_branch)"
-PS1_ROOT="${PS1_ROOT}\n\$(parse_git_branch)"
+
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    # inside a git repo, show branch info
+    PS1_DEFAULT="${PS1_DEFAULT}\n\$(parse_git_branch)\n"
+    PS1_ROOT="${PS1_ROOT}\n\$(parse_git_branch)\n"
+else
+    # not a git repo, leave prompt as is
+    PS1_DEFAULT="${PS1_DEFAULT}"
+    PS1_ROOT="${PS1_ROOT}"
+fi
 
 # Set PS1 depending on user
 if [ "$(id -u)" -eq 0 ]; then
@@ -172,4 +197,3 @@ if [ "$(id -u)" -eq 0 ]; then
 else
     PS1="$PS1_DEFAULT"
 fi
-
