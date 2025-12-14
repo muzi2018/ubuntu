@@ -197,3 +197,26 @@ if [ "$(id -u)" -eq 0 ]; then
 else
     PS1="$PS1_DEFAULT"
 fi
+
+
+# Git shortcuts
+alias gcm='git commit -m'
+alias gr='git restore'
+alias gst='git status'
+
+
+
+alias g='git'
+alias gco='git checkout'
+alias gb='git branch'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline --graph --all --decorate'
+alias gpull='git pull --rebase'
+alias gpush='git push origin HEAD'
+alias gunstage='git reset HEAD'
+alias gdiff='git diff'
+alias glast='git log -1 HEAD'
+alias gbranchdel='git branch -d'
+alias gbranchdelforce='git branch -D'
