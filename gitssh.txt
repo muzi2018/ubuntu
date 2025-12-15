@@ -3,4 +3,6 @@ eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 
 Problem1: Connection closed by 20.205.243.166 port 443
+[https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port]
 ssh -T -p 443 git@ssh.github.com
+git clone ssh://git@ssh.github.com:443/YOUR-USERNAME/YOUR-REPOSITORY.git
