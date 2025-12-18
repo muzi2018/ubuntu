@@ -1,0 +1,20 @@
+1. fcitx5 + rime
+sudo apt update
+sudo apt install fcitx5 fcitx5-rime fcitx5-configtool
+
+2. configure
+vim ~/.profile
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+
+3. start fcitx5
+fcitx5 &
+fcitx5-remote
+
+4. add rime
+fcitx5-configtool
+Input Method → search rime → Add 
+
+5. start rime
+ctrl + space
