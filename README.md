@@ -12,6 +12,7 @@ weixin
 pinyin
 
 Kazam
+
 sudo apt install kazam
 
 
